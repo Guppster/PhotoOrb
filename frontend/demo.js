@@ -24,8 +24,7 @@ $(function () {
                 var image = document.createElement("img");
                 image.src = "no_canvas_photo.jpg";
                 setTimeout(function () {
-                    three60App.snap().call(snapshot, image)
-                    // add_snapshot.call(snapshot, image)
+                    add_snapshot.call(snapshot, image)
                 }, 1);
             }
 
@@ -160,9 +159,9 @@ $(function () {
     }
 });
 
-var three60App = {
+// UCHI
 
-    // apiUrl: "http://",
+var three60App = {
 
     snap: function (element) {
         $(element).data("snapshot", this).addClass("item");
