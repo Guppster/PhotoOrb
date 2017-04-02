@@ -154,6 +154,7 @@ var Routes = []Route{
     Handler: func(w http.ResponseWriter, r *http.Request) {
       user := getStrParam(r, "user")
       id := getIntParam(r, "id")
+
       path := fmt.Sprintf("./bucket/%s/%04d", user, id)
 
       // check if user + id exists
@@ -183,6 +184,29 @@ var Routes = []Route{
       if jerr := json.NewEncoder(w).Encode(filenames); jerr != nil {
         panic(jerr)
       }
+    },
+  },
+  Route{
+    Method: http.MethodGet,
+    Pattern: "/images/{user}/{id}/{file}",
+    Handler: func(w http.ResponseWriter, r *http.Request) {
+      user := getStrParam(r, "user")
+      id := getIntParam(r, "id")
+      file := getStrParam(r, "file")
+
+      path := fmt.Sprintf("./bucket/%s/%04d/%s", user, id, file)
+
+      // check if user + id exists
+      if _, err := os.Stat(path); err != nil {
+        if os.IsNotExist(err) {
+          w.WriteHeader(http.StatusBadRequest)
+          return
+        } else {
+          panic(err)
+        }
+      }
+
+      http.ServeFile(w, r, path)
     },
   },
 }
