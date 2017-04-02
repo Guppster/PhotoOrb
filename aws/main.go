@@ -6,8 +6,10 @@ import (
   "net/http"
   "os"
   "fmt"
+  "io/ioutil"
   "io"
   "encoding/json"
+  "strconv"
 )
 
 type Route struct {
@@ -51,8 +53,8 @@ var Routes = []Route{
             if mkerr != nil {
               fmt.Println("mkdir id", mkerr)
             }
-            w.WriteHeader(http.StatusOK)
             w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+            w.WriteHeader(http.StatusOK)
             if jerr := json.NewEncoder(w).Encode(id); jerr != nil {
         			panic(err)
         		}
@@ -104,6 +106,47 @@ var Routes = []Route{
       w.WriteHeader(http.StatusOK)
 		},
 	},
+  Route{
+    Method: http.MethodGet,
+    Pattern: "/images/{user}",
+    Handler: func(w http.ResponseWriter, r *http.Request) {
+      user := getStrParam(r, "user")
+      path := "./bucket/" + user
+
+      filenames := []int{}
+
+      w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+      w.WriteHeader(http.StatusOK)
+
+      // check if user exists
+      if _, err := os.Stat(path); err != nil {
+        if os.IsNotExist(err) {
+          if jerr := json.NewEncoder(w).Encode(filenames); jerr != nil {
+            panic(jerr)
+          }
+          return
+        } else {
+          panic(err)
+        }
+      }
+
+      files, err := ioutil.ReadDir(path)
+      if err != nil {
+        panic(err)
+      }
+
+      for _, file := range files {
+        name, converr := strconv.Atoi(file.Name())
+        if converr == nil {
+          filenames = append(filenames, name)
+        }
+      }
+
+      if jerr := json.NewEncoder(w).Encode(filenames); jerr != nil {
+        panic(jerr)
+      }
+    },
+  },
 }
 
 func main() {
