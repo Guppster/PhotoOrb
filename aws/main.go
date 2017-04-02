@@ -72,17 +72,18 @@ var Routes = []Route{
 		Pattern:     "/upload/{user}/{id}",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
       user := getStrParam(r, "user")
-      id := getStrParam(r, "id")
+      id := getIntParam(r, "id")
 
       r.ParseMultipartForm(32 << 20)
       file, handler, err := r.FormFile("uploadfile")
       if err != nil {
          fmt.Println("parse", err)
+         w.WriteHeader(http.StatusBadRequest)
          return
       }
       defer file.Close()
 
-      filedir := "./bucket/" + user + "/" + id
+      filedir := fmt.Sprintf("./bucket/%s/%04d", user, id)
       filename := handler.Filename
 
       mkerr := os.MkdirAll(filedir, 0777)
@@ -140,6 +141,43 @@ var Routes = []Route{
         if converr == nil {
           filenames = append(filenames, name)
         }
+      }
+
+      if jerr := json.NewEncoder(w).Encode(filenames); jerr != nil {
+        panic(jerr)
+      }
+    },
+  },
+  Route{
+    Method: http.MethodGet,
+    Pattern: "/images/{user}/{id}",
+    Handler: func(w http.ResponseWriter, r *http.Request) {
+      user := getStrParam(r, "user")
+      id := getIntParam(r, "id")
+      path := fmt.Sprintf("./bucket/%s/%04d", user, id)
+
+      // check if user + id exists
+      if _, err := os.Stat(path); err != nil {
+        if os.IsNotExist(err) {
+          w.WriteHeader(http.StatusBadRequest)
+          return
+        } else {
+          panic(err)
+        }
+      }
+
+      w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+      w.WriteHeader(http.StatusOK)
+
+      filenames := []string{}
+
+      files, err := ioutil.ReadDir(path)
+      if err != nil {
+        panic(err)
+      }
+
+      for _, file := range files {
+        filenames = append(filenames, file.Name())
       }
 
       if jerr := json.NewEncoder(w).Encode(filenames); jerr != nil {
