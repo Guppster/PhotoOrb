@@ -7,6 +7,7 @@ import (
   "os"
   "fmt"
   "io"
+  "encoding/json"
 )
 
 type Route struct {
@@ -20,8 +21,8 @@ var Routes = []Route{
     Method: http.MethodGet,
     Pattern: "/",
     Handler: func(w http.ResponseWriter, r *http.Request) {
-      w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 		  w.WriteHeader(http.StatusOK)
+      w.Header().Set("Content-Type", "text/html; charset=UTF-8")
       io.WriteString(w, `
         <html>
           <body>
@@ -29,6 +30,39 @@ var Routes = []Route{
             <p>You ugly piece of shit</p>
           </body>
         </html>`)
+    },
+  },
+  Route{
+    Method: http.MethodPost,
+    Pattern: "/upload/{user}",
+    Handler: func(w http.ResponseWriter, r *http.Request) {
+      user := getStrParam(r, "user")
+      err := os.MkdirAll("./bucket/" + user, 0777)
+      if err != nil {
+        fmt.Println("mkdir", err)
+      }
+
+      id := 1
+      for {
+        path := fmt.Sprintf("./bucket/%s/%04d", user, id)
+        if _, err := os.Stat(path); err != nil {
+          if os.IsNotExist(err) {
+            mkerr := os.MkdirAll(path, 0777)
+            if mkerr != nil {
+              fmt.Println("mkdir id", mkerr)
+            }
+            w.WriteHeader(http.StatusOK)
+            w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+            if jerr := json.NewEncoder(w).Encode(id); jerr != nil {
+        			panic(err)
+        		}
+            return
+          } else {
+            panic(err)
+          }
+        }
+        id += 1
+      }
     },
   },
 	Route{
@@ -49,9 +83,9 @@ var Routes = []Route{
       filedir := "./bucket/" + user + "/" + id
       filename := handler.Filename
 
-      err := os.MkdirAll(path, 0777)
-      if err != nil {
-        fmt.Println("mkdir", err)
+      mkerr := os.MkdirAll(filedir, 0777)
+      if mkerr != nil {
+        fmt.Println("mkdir", mkerr)
       }
 
       f, err := os.OpenFile(filedir + "/" + filename, os.O_WRONLY | os.O_CREATE, 0666)
