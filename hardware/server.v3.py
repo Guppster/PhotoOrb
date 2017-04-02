@@ -53,6 +53,16 @@ def turn(movement, rev, diff):
         GPIO.cleanup()
         return "turn"
 
+steps = {
+        "default" : ["move('front', 5)","turn('left', 3, 0.2)"]
+        }
+
+@app.route('/next/<string:step>')
+def nextMove(step):
+        if step in steps:
+                [eval(i) for i in steps[step]]
+        return "yes sire"
+
 if __name__ == "__main__":
         app.run(debug=True)
 
