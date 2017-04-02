@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" id="camSection">
 
         <div id="camera">
             <div class="placeholder">
@@ -12,7 +12,7 @@
         </div>
         <br>
 
-        <button id="take_snapshots" class="btn btn-primary btn-block">Make 3D</button>
+        <button id="take_snapshots" class="btn btn-primary btn-block btn-lg">Make 3D</button>
         <!--<button id="show_stream" class="btn btn-primary">Show stream</button>-->
         <br>
 
@@ -21,8 +21,23 @@
         <!--<button id="discard_snapshot">Discard snapshot</button>-->
         <button id="upload_snapshot" class="btn btn-primary">Upload to URL</button>
         <br>
-        <img src="loader.gif" id="loader">
+        <img style="" src="loader.gif" id="loader">
         <div id="upload_status"></div>
         <div id="upload_result"></div>
+    </div>
+
+    <div id="speechSection">
+        <div class="col-xs-12 form-group">
+            <button onclick="initRec()" class="btn btn-into">InitRec</button>
+            <button onclick="startRec()" class="btn btn-into">StartRec</button>
+            <button onclick="stopRec()" class="btn btn-into">StopRec</button>
+        </div>
+        <div class="col-xs-12 form group">
+            <label >You said</label>
+            <textarea id="recognized" class="form-control"></textarea>
+            <!--<input type="email" class="form-control" id="email" placeholder="Enter email">-->
+        </div>
+
+
     </div>
 </div>

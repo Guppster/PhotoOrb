@@ -5,6 +5,9 @@ main.config(['$routeProvider',
         $routeProvider.when('/home', {
             templateUrl: 'views/home.html',
             controller: 'Three60Controller'
+        }).when('/preview', {
+            templateUrl: 'views/preview.html',
+            controller: 'Three60Controller'
         }).otherwise({
             redirectTo: '/home'
         });
