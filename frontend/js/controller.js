@@ -183,6 +183,7 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
           console.log(id);
           $scope.userID = id;
           take_snapshots(20, id);
+          $scope.showPreview = true;
         });
       });
 
