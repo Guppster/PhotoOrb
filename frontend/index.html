@@ -7,7 +7,6 @@
     <meta name="description" content="">
     <title style="text-align: center;">Hack</title>
     <link rel="shortcut icon" href="images/icon2.ico"/>
-    <meta name="google-site-verification" content="v9PVUU680axDHFq4J0aDuwpFkMOJui0muDzsQQ0TF9k"/>
     <meta name="author" content="Uchi Uchibeke">
     <link rel="stylesheet" href="demo.css" media="all">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
@@ -18,18 +17,22 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script type="text/javascript"
             src="dist/jpeg_camera_with_dependencies.min.js"></script>
-    <script type="text/javascript" src="demo.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="js/speechToText/iSpeechRecognizer.min.js"></script>
+    <script type="text/javascript"
+            src="http://code.vostrel.cz/jquery.reel.js">
+    </script>
 </head>
 <body class="container-fluid">
 <div class="ng-view" autoscroll="true" style="width: 100%;"></div>
-<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-<script src="js/app.js"></script>
-<script src="js/controller.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-<script src="js/speechToText/iSpeechRecognizer.min.js"></script>
+
 <script>
+
     initRec = function () {
         audioRecognizer = new iSpeechRecognizer({
             apiKey: 'developerdemokeydeveloperdemokey',
@@ -37,7 +40,16 @@
             onResponse: onRecognitionResponse,
             workerLoc: 'js/speechToText/iSpeechWorker.min.js'
         });
+
+        var actions = ["snap", "photo", "image"]
+        var botName = ["camera", "pi", "alexa", "computer", "waifu", "phone", "bot"]
+        audioRecognizer.addAlias('ACTIONS', actions);
+        audioRecognizer.addCommand('Hey, my bot, take cool waifu %ACTIONS%');
+        audioRecognizer.addCommand('Hey, Waifu take photo with my %botName%');
+        audioRecognizer.setLocale("en-US");
+
     }
+
     onRecognitionResponse = function (response) {
         if (response.result == 'success') {
             document.getElementById('recognized').innerHTML = "Text: " + response.text + "\n\nConfidence: " + response.confidence;
@@ -50,12 +62,6 @@
     }
     stopRec = function () {
         audioRecognizer.stop();
-    }
-    addCommands = function () {
-        audioRecognizer.addCommand("check %WHAT%");
-        audioRecognizer.addAlias("WHAT", ["status", "signal", "network", "phone number"]);
-        audioRecognizer.addCommand(["forward", "backward"]);
-        audioRecognizer.setLocale("en-US");
     }
 </script>
 

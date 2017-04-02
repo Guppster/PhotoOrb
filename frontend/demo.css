@@ -1,8 +1,9 @@
 body {
-    background-color: #ddd;
+    background-color: white;
     padding: 0.5em;
     text-align: center;
     font-family: "Helvetica Neueu", "Helvetica", "Arial", sans;
+    max-width: 100%;
 }
 
 #camSection button, #camSection input, #camSection #loader {
@@ -56,3 +57,28 @@ input {
 button, #upload_status, #upload_result, #loader {
     margin: 0.5em;
 }
+
+/*Image*/
+
+.gallery-container {
+    white-space: nowrap;
+    /*overflow-x: scroll;*/
+    /*overflow-y: hidden;*/
+    padding: 0px 0px 30px 135px !important;
+}
+
+.gallery-item {
+    position: relative;
+    display: inline-block;
+    /*margin: 0px 20px 20px 0px;*/
+    box-shadow: 1px 1px 3px 1px black;
+    width: auto;
+    /*vertical-align: bottom;*/
+    cursor: zoom-in;
+}
+
+.homeFigure * {
+    background: white !important;
+    color: #262626 !important;
+}
+
