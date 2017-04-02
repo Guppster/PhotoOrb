@@ -4,11 +4,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <script>
 
-$(window).on('load', function () {
+  $(window).on('load', function () {
     $(':button').on('click', function() {
       $.ajax({
           // Your server script to process the upload
-          url: 'http://localhost/upload/1',
+          url: 'http://ec2-54-175-181-19.compute-1.amazonaws.com/upload/me/1',
           type: 'POST',
 
           // Form data
@@ -46,7 +46,7 @@ $(window).on('load', function () {
 <body>
 
   <form enctype="multipart/form-data">
-      <input name="file" type="file" />
+      <input name="uploadfile" type="file" />
       <input type="button" value="Upload" />
   </form>
   <progress></progress>

@@ -22,30 +22,52 @@ var Routes = []Route{
     Handler: func(w http.ResponseWriter, r *http.Request) {
       w.Header().Set("Content-Type", "text/html; charset=UTF-8")
 		  w.WriteHeader(http.StatusOK)
-      io.WriteString(w, "<html><body><h3>Server Works!</h3><h5>You ugly piece of shit</h5></body></html>")
+      io.WriteString(w, `
+        <html>
+          <body>
+            <h3>Server Works!</h3>
+            <p>You ugly piece of shit</p>
+          </body>
+        </html>`)
     },
   },
 	Route{
 		Method:      http.MethodPost,
-		Pattern:     "/upload/{user}/{seq}",
+		Pattern:     "/upload/{user}/{id}",
 		Handler: func(w http.ResponseWriter, r *http.Request) {
+      user := getStrParam(r, "user")
+      id := getStrParam(r, "id")
+
       r.ParseMultipartForm(32 << 20)
       file, handler, err := r.FormFile("uploadfile")
       if err != nil {
-         fmt.Println(err)
+         fmt.Println("parse", err)
          return
       }
       defer file.Close()
 
-      fmt.Fprintf(w, "%v", handler.Header)
-      f, err := os.OpenFile("./test/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+      filedir := "./bucket/" + user + "/" + id
+      filename := handler.Filename
+
+      err := os.MkdirAll(path, 0777)
       if err != nil {
-         fmt.Println(err)
+        fmt.Println("mkdir", err)
+      }
+
+      f, err := os.OpenFile(filedir + "/" + filename, os.O_WRONLY | os.O_CREATE, 0666)
+      if err != nil {
+         fmt.Println("open", err)
          return
       }
       defer f.Close()
 
-      io.Copy(f, file)
+      written, err := io.Copy(f, file)
+      if err != nil {
+        fmt.Println("write", err)
+      }
+      log.Println(written, "bytes written to", filedir + "/" + filename)
+
+      w.WriteHeader(http.StatusOK)
 		},
 	},
 }
