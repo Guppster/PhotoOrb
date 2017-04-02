@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" id="camSection">
 
         <div id="camera">
             <div class="placeholder">
@@ -24,5 +24,19 @@
         <img src="loader.gif" id="loader">
         <div id="upload_status"></div>
         <div id="upload_result"></div>
+    </div>
+
+    <div id="speechSection">
+        <div class="col-xs-12 form-group">
+            <button onclick="initRec()" class="btn btn-into">InitRec</button>
+            <button onclick="startRec()" class="btn btn-into">StartRec</button>
+            <button onclick="stopRec()" class="btn btn-into">StopRec</button>
+            <button onclick="addCommands()" class="btn btn-into">addCommands</button>
+        </div>
+        <div class="col-xs-12 form group">
+            <label >You said</label>
+            <textarea id="recognized" class="form-control"></textarea>
+            <!--<input type="email" class="form-control" id="email" placeholder="Enter email">-->
+        </div>
     </div>
 </div>

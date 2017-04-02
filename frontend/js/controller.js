@@ -6,6 +6,10 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
         if (window.JpegCamera) {
             var camera;
 
+            var itemId = itemId ? itemId : 0;
+
+            // var getNewId = $.ajax(apiUrl + "/" + $scope.signedInUser);
+
             var take_snapshots = function (count) {
                 var snapshot = camera.capture();
 
@@ -27,12 +31,12 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
                 }
             };
 
-            var add_snapshot = function (element, itemId) {
+            var add_snapshot = function (element) {
                 $(element).data("snapshot", this).addClass("item");
                 console.log($(element).data("snapshot")._extra_canvas)
 
                 var itemToUpload = $(element).data("snapshot");
-                upload_snapshot(itemToUpload, itemId);
+                upload_snapshot(itemToUpload);
 
                 var $container = $("#snapshots").append(element);
                 var $camera = $("#camera");
@@ -61,17 +65,7 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
                 $("#upload_status, #upload_result").html("");
             };
 
-            var getNewId = function (user) {
-                return $.ajax("example.php").done(function () {
-                    alert("success");
-                }).fail(function () {
-                    alert("error");
-                }).always(function () {
-                    alert("complete");
-                });
-            }
-
-            var upload_snapshot = function (item, itemId) {
+            var upload_snapshot = function (item) {
                 if (!apiUrl.length) {
                     $("#upload_status").html("Please provide URL for the upload");
                     return;
@@ -87,14 +81,17 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
                 console.log(snapshot);
                 console.log(snapshot._extra_canvas);
 
+                itemId += 1;
+
                 if (snapshot._extra_canvas.toBlob) {
                     snapshot._extra_canvas.toBlob(
                         function (blob) {
                             var formData = new FormData();
-                            formData.append('uploadfile', blob, itemId + itemId + ".jpg");
+                            formData.append('uploadfile', blob, itemId + ".jpg");
+                            var seriesPath = apiUrl + "/" + $scope.signedInUser + "/" + folderID;
                             $.ajax({
                                 type: "POST",
-                                url: apiUrl,
+                                url: seriesPath,
                                 data: formData,
                                 processData: false,
                                 contentType: false,
@@ -164,8 +161,13 @@ three60Controller.controller('Three60Controller', ['$scope', '$http', '$timeout'
                 $("#show_stream").hide();
             };
 
+            $scope.signedInUser = "nick.k"
+
             $("#take_snapshots").click(function () {
-                take_snapshots(2);
+                // getNewId.done(function () {
+                //     var apiResponse = this.response;
+                    take_snapshots(2);
+                // });
             });
 
             $("#snapshots").on("click", ".item", select_snapshot);
